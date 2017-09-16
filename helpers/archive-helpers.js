@@ -67,6 +67,7 @@ exports.addUrlToList = (url, callback = _.identity) => {
       }
     });
   }
+  return;
   console.log('what is the order?');
   // exports.isUrlInList(url, (isContained) => {
   //   console.log("isContained: " + isContained);
@@ -87,19 +88,20 @@ exports.addUrlToList = (url, callback = _.identity) => {
 
 exports.isUrlArchived = (url, callback = _.identity) => {
   // check sites folder to see if full site has been archived
+  var archived;
   exports.readListOfUrls((urls) => {
-    callback(_.contains(fs.readdirSync(exports.paths.archivedSites), url));
+    archived = _.contains(fs.readdirSync(exports.paths.archivedSites), url);
+    callback(archived);
   });
   // return boolean
+  return archived;
 };
 
 exports.downloadUrls = function(urls) {
   // iterate through urls
-  console.log('in downloadUrls: ', JSON.stringify(urls));
   urls.forEach((url) => {
   //   make get request on current url on index page
     url = nodeUrl.parse(url);
-    console.log(url.protocol);
     if (!url.protocol) {
       url.protocol = 'http:';
       url.slashes = true;
@@ -107,9 +109,6 @@ exports.downloadUrls = function(urls) {
       url.href = url.protocol + '//' + url.href;
     }
     var fullUrl = url.protocol + '//' + url.host;
-    console.log('this is the full url.....: ', fullUrl);
-    console.log('protocol added?: ', url.protocol);
-    console.log('url object........: ', JSON.stringify(url));
     http.get(url.href, (result) => {
       result.setEncoding('utf8');
       let rawData = '';
@@ -123,11 +122,6 @@ exports.downloadUrls = function(urls) {
         }
         pathName += '/index.html';
         fs.writeFile(pathName, rawData, (error, data) => {
-          if (!error) {
-            setTimeout(() => {
-              console.log('we wrote!!!!.....', fs.readdirSync(exports.paths.archivedSites));
-            }, 1800);
-          }
         });
       });
     });
