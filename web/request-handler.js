@@ -1,5 +1,5 @@
 var path = require('path');
-var archive = require('../helpers/archive-helpers');
+var archive = require('../helpers/archive-helpers.js');
 var fs = require('fs');
 var httpHelper = require('./http-helpers.js');
 // require more modules/folders here!
@@ -36,6 +36,7 @@ exports.handleRequest = function (req, res) {
           httpHelper.serveAssets(archivePath, res);
         } else {
           archive.addUrlToList(data);
+          archive.readListOfUrls();
           routes.loading(res);
         }
         return;

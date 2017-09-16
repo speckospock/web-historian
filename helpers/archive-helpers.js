@@ -26,6 +26,7 @@ exports.initialize = function(pathsObj) {
 };
 
 var _urls = [];
+exports.urls = () => _urls;
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
 
@@ -116,8 +117,10 @@ exports.downloadUrls = function(urls) {
         rawData += chunk;
       });
       result.on('end', () => {
-        var pathName = './archives/sites/' + nodeUrl.parse(url).hostname;
+        var pathName = path.join(__dirname, '../archives/sites/', nodeUrl.parse(url).hostname);
         if (!fs.existsSync(pathName)) {
+          var currentPath = path.join(__dirname, '../archives/sites/');
+          console.log(currentPath);
           fs.mkdirSync(pathName);
         }
         pathName += '/index.html';
