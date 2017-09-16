@@ -85,8 +85,11 @@ exports.addUrlToList = (url, callback = _.identity) => {
   //   serialize/stringify then write url to archives/sites.txt
 };
 
-exports.isUrlArchived = function(url, callback) {
+exports.isUrlArchived = (url, callback = _.identity) => {
   // check sites folder to see if full site has been archived
+  exports.readListOfUrls((urls) => {
+    callback(_.contains(fs.readdirSync(exports.paths.archivedSites), url));
+  });
   // return boolean
 };
 
