@@ -92,10 +92,22 @@ exports.isUrlArchived = function(url, callback) {
 
 exports.downloadUrls = function(urls) {
   // iterate through urls
-  console.log(JSON.stringify(urls));
+  console.log('in downloadUrls: ', JSON.stringify(urls));
   urls.forEach((url) => {
   //   make get request on current url on index page
-    http.get(url, (result) => {
+    url = nodeUrl.parse(url);
+    console.log(url.protocol);
+    if (!url.protocol) {
+      url.protocol = 'http:';
+      url.slashes = true;
+      url.hostname = url.href;
+      url.href = url.protocol + '//' + url.href;
+    }
+    var fullUrl = url.protocol + '//' + url.host;
+    console.log('this is the full url.....: ', fullUrl);
+    console.log('protocol added?: ', url.protocol);
+    console.log('url object........: ', JSON.stringify(url));
+    http.get(url.href, (result) => {
       result.setEncoding('utf8');
       let rawData = '';
       result.on('data', (chunk) => {
@@ -109,7 +121,9 @@ exports.downloadUrls = function(urls) {
         pathName += '/index.html';
         fs.writeFile(pathName, rawData, (error, data) => {
           if (!error) {
-            console.log('we wrote!!!!.....');
+            setTimeout(() => {
+              console.log('we wrote!!!!.....', fs.readdirSync(exports.paths.archivedSites));
+            }, 1800);
           }
         });
       });
@@ -123,4 +137,4 @@ exports.downloadUrls = function(urls) {
 
 };
 
-exports.downloadUrls(['http://www.google.com']);
+// exports.downloadUrls(['http://www.google.com']);

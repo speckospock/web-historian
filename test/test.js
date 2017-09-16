@@ -8,10 +8,11 @@ var initialize = require('../web/initialize.js');
 
 initialize(path.join(__dirname, '/testdata'));
 
-archive.initialize({
+/*archive.initialize({
   archivedSites: path.join(__dirname, '/testdata/sites'),
   list: path.join(__dirname, '/testdata/sites.txt')
 });
+*/
 
 var request = supertest.agent(server);
 
@@ -144,14 +145,14 @@ describe('archive helpers', function() {
 
   describe('#downloadUrls', function () {
     it('should download all pending urls in the list', function (done) {
-      var urlArray = ['http://www.example.com', 'http://www.google.com'];
+      var urlArray = ['www.example.com', 'www.google.com'];
       archive.downloadUrls(urlArray);
 
       // Ugly hack to wait for all downloads to finish.
       setTimeout(function () {
         expect(fs.readdirSync(archive.paths.archivedSites)).to.deep.equal(urlArray);
         done();
-      }, 500);
+      }, 1800);
     });
   });
 });
