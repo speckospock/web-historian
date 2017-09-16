@@ -1,7 +1,8 @@
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
-
+var http = require('http');
+var nodeUrl = require('url');
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
  * Consider using the `paths` object below to store frequently used file paths. This way,
@@ -90,5 +91,36 @@ exports.isUrlArchived = function(url, callback) {
 };
 
 exports.downloadUrls = function(urls) {
+  // iterate through urls
+  console.log(JSON.stringify(urls));
+  urls.forEach((url) => {
+  //   make get request on current url on index page
+    http.get(url, (result) => {
+      result.setEncoding('utf8');
+      let rawData = '';
+      result.on('data', (chunk) => {
+        rawData += chunk;
+      });
+      result.on('end', () => {
+        var pathName = './archives/sites/' + nodeUrl.parse(url).hostname;
+        if (!fs.existsSync(pathName)) {
+          fs.mkdirSync(pathName);
+        }
+        pathName += '/index.html';
+        fs.writeFile(pathName, rawData, (error, data) => {
+          if (!error) {
+            console.log('we wrote!!!!.....');
+          }
+        });
+      });
+    });
+  });
+  //   read through index page and make request for each asset
+  //   replace all source paths with new source paths
+  //   save file
   // call helper function (download worker) with list of urls
+
+
 };
+
+exports.downloadUrls(['http://www.google.com']);
