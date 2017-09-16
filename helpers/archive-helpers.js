@@ -28,13 +28,14 @@ var _urls = [];
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
 
-exports.readListOfUrls = function(callback) {
+exports.readListOfUrls = (callback = _.identity) => {
   // read contents of archives/sites.txt
   fs.readFile(exports.paths.list, 'utf8', (err, data) => {
     if (err) {
       console.log('sorry in pulledURLs');
     } else {
       _urls = data.split('\n');
+      callback(_urls);
       console.log('we ignored the callback, sorry.');
     }
   });
@@ -44,23 +45,19 @@ exports.readListOfUrls = function(callback) {
 exports.isUrlInList = (url, callback = _.identity) => {
   // look at cached urls
   // return boolean
-  exports.readListOfUrls();
-  let contained = _urls.reduce((memo, el) => memo || (el === url), false);
-  return callback(contained);
-  // return true;
-  // if (contained) {
-  //   callback(url);
-  //   return true;
-  // } else {
-  //   return false;
-  // }
+  exports.readListOfUrls(() => {
+    let contained = _urls.reduce((memo, el) => memo || (el === url), false);
+    // console.log('hello' + callback(contained));
+    return callback(contained);
+  });
 };
 
 exports.addUrlToList = (url, callback = _.identity) => {
   // if isUrlInList on passed url returns false
-  exports.isUrlInList(url, (newUrl) => {
-    _urls.append(newUrl);
-    fs.appendFile(exports.paths.list, JSON.stringify(newUrl), (err, data) => {
+  if (!exports.isUrlInList(url)) {
+    _urls.push(url);
+    console.log(JSON.stringify(_urls));
+    fs.writeFile(exports.paths.list, _urls.join('\n'), (err, data) => {
       if (err) {
         console.log('sorry.  Add url.');
       } else {
@@ -68,7 +65,21 @@ exports.addUrlToList = (url, callback = _.identity) => {
         console.log('Write successful.');
       }
     });
-  });
+  }
+  console.log('what is the order?');
+  // exports.isUrlInList(url, (isContained) => {
+  //   console.log("isContained: " + isContained);
+  //   // if(isContained)
+  //   _urls.push(isContained);
+    // fs.appendFile(exports.paths.list, JSON.stringify(newUrl), (err, data) => {
+    //   if (err) {
+    //     console.log('sorry.  Add url.');
+    //   } else {
+    //     callback(url);
+    //     console.log('Write successful.');
+    //   }
+    // });
+  // });
   //   append url to array
   //   serialize/stringify then write url to archives/sites.txt
 };
