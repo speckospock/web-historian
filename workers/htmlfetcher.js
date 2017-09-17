@@ -5,15 +5,17 @@ var queue = [];
 archive.readListOfUrls((urls) => {
   if (urls.length) {
     urls.forEach((url) => {
-      archive.isUrlArchived(url, (archived) => {
-        if (!archived) {
-          archive.downloadUrls([url]);
-        }
-      });
+      if (url.length) {
+        console.log('current url is: ', url, ' of type: ', typeof url);
+        archive.isUrlArchived(url, (archived) => {
+          if (!archived) {
+            archive.downloadUrls([url]);
+          }
+        });
+      }
     });
   }
 });
-console.log('from htmlfetcher:', queue);
 // pass array of urls archive helpers'
 // archive.urls.forEach((url) => {
 //   archive.isUrlArchived(url, (archived) => {

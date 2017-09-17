@@ -103,6 +103,7 @@ exports.downloadUrls = function(urls) {
   urls.forEach((url) => {
   //   make get request on current url on index page
     url = nodeUrl.parse(url);
+    console.log('url is :   ' + url.href);
     if (!url.protocol) {
       url.protocol = 'http:';
       url.slashes = true;
@@ -110,6 +111,7 @@ exports.downloadUrls = function(urls) {
       url.href = url.protocol + '//' + url.href;
     }
     var fullUrl = url.protocol + '//' + url.host;
+    console.log('full url is :    ' + url.href);
     http.get(url.href, (result) => {
       result.setEncoding('utf8');
       let rawData = '';
